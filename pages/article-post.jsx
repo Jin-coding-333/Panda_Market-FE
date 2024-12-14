@@ -1,37 +1,21 @@
 import { useState } from "react";
 import styles from "@/styles/pages/ArticlePost.module.css";
-import { getArticles, postArticle } from "@/lib/pandaMarketApiService";
-import { useRouter } from "next/router";
+import useArticlePost from "@/hooks/useArticlePost";
 
 function ArticlePost() {
-  const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [titleValid, setTitleValid] = useState(false);
   const [contentValid, setContentValid] = useState(false);
 
-  const postHandler = async () => {
-    try {
-      if (title !== "" && content !== "") {
-        const response = await postArticle(title, content);
-        console.log("response : ", response);
-
-        setTitle('');
-        setContent('');
-      }
-      // 게시물 등록하면서 이동위해 최신 게시글 id를 받아오기
-      const toMoveArticle = await getArticles(0, 1, 'recent');
-      const toMoveArticleID = toMoveArticle.article[0].id;
-
-      router.push(`/ArticleDetail/${toMoveArticleID}`);
-    } catch (error) {
-      console.error("Error posting article:", error);
-    }
-  }
+  const { postHandler } = useArticlePost(title, content, setTitle, setContent);
 
   const titleValidHandler = () => {
     if (title === "") {
       setTitleValid(true);
+      setTimeout(() => {
+        setTitleValid(false);
+      }, 3000);
     } else {
       setTitleValid(false);
     }
@@ -40,6 +24,9 @@ function ArticlePost() {
   const contentValidHandler = () => {
     if (content === "") {
       setContentValid(true);
+      setTimeout(() => {
+        setContentValid(false);
+      }, 3000);
     } else {
       setContentValid(false);
     }
@@ -81,7 +68,7 @@ function ArticlePost() {
             </div>
             : null
           }
-
+          
         </div>
         <div className={styles.articlePostContentBox}>
           <h2 className={styles.articlePostInputName}>*내용</h2>
