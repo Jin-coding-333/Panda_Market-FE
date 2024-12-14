@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import styles from "@/styles/ui/Footer.module.css";
+import styles from "@/styles/layouts/Footer.module.css";
 
 function Footer() {
   return (

@@ -8,47 +8,35 @@ import ArticleInfo from "@/components/ArticleDetail/ArticleInfo";
 import CommentPost from "@/components/ArticleDetail/CommentPost";
 import Comments from "@/components/ArticleDetail/Comments";
 import NoneComments from "@/components/ArticleDetail/NoneComments";
+import useArticleId from "@/hooks/useArticleId";
+import useComment from "@/hooks/useComment";
 
 function ArticleDetail() {
   const router = useRouter();
   const articleId = router.query.id;
-  const [article, setArticle] = useState(null);
-  const [comments, setComments] = useState([]); // 초기값을 빈 배열로 설정
-  const [commentPost, setCommentPost] = useState(false);
 
-  const articleLoadHandler = async () => {
-    if (!articleId) return;
-      const articleDetail = await getArticleId(articleId);
-      setArticle(articleDetail);
-  };
+  const { article, isLoading, hasError } = useArticleId(articleId) || [];
+  const { comments, handleDeleteComment, handlePostComment, setTextareaValue, textareaValue } = useComment(articleId) || [];
 
-  const commentLoadHandler = async () => {
-    if (!articleId) return;
-    const articleComments = await getComments(articleId);
-    setComments(articleComments.comments || []); // comments 배열만 추출
-    console.log("Fetched comments:", articleComments.comments);
-  };
-
-
-  useEffect(() => {
-    if (!articleId) return;
-
-    articleLoadHandler();
-    commentLoadHandler();
-  }, [articleId, commentPost]);
-
-  if (!article) return <p>Loading article...</p>;
+// loading, error 일 때의 화면 처리 디자인 필요(다음에)
+  if (isLoading) { return <div style={{ marginTop: "100px" }}>Loading...</div>; }
+  if (hasError) {
+    return <div>Error loading article. Please try again later.</div>;
+  }
+  if (!article || article.length === 0) {
+    return <div>No article found.</div>;
+  }
 
   return (
     <div className={styles.ArticleDetailBox}>
       <ArticleInfo article={article} />
-      <CommentPost articleId={articleId} commentPost={setCommentPost} />
+      <CommentPost handlePostComment={handlePostComment} setTextareaValue={setTextareaValue} textareaValue={textareaValue} />
 
       {comments.map((comment, index) => (
-        <Comments key={index} comment={comment} commentLoadHandler={commentLoadHandler} />
+        <Comments key={index} comment={comment} handleDeleteComment={handleDeleteComment} />
       ))}
       {comments.length ? null : <NoneComments />}
-      <Link href="/CommunityFeed">
+      <Link href="/community-feed">
         <button className={styles.toCommunityFeedButton}>
           목록으로 돌아가기
           <div className={styles.toCommunityFeedButtonImage}>

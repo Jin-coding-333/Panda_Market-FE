@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import styles from "@/styles/ui/Header.module.css";
+import styles from "@/styles/layouts/Header.module.css";
 
 function Header() {
   const router = useRouter();
@@ -9,8 +9,7 @@ function Header() {
   const getLinkStyle = (path) => (
     {
       color: router.pathname === path ? "var(--mainColor)" : "#4B5563",
-      fontWeight: router.pathname === path ? 800 : 700,
-      fontSize: router.pathname === path ? 18 : 18,
+      fontWeight: router.pathname === path ? 800 : 700, fontSize: router.pathname === path ? 18 : 18,
     });
 
   return (
@@ -45,7 +44,7 @@ function Header() {
 
           <div className={styles.headerTextBox}>
             <div className={styles.headerText}>
-              <Link href="/CommunityFeed" style={getLinkStyle("/CommunityFeed")}>
+              <Link href="/community-feed" style={getLinkStyle("/community-feed")}>
                 자유게시판
               </Link>
             </div>
